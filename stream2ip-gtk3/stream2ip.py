@@ -102,7 +102,7 @@ Icon_red = runpath + 'icons/S2-r.svg' # red
 Icon_black = runpath + 'icons/S2-c.svg' #black
 Icon_Attention = runpath + 'icons/S2-att.svg' # Attention
 Current_Icon = Icon
-print(Icon)
+# print(Icon)
 # Panel Icons
 pIcon = runpath + 'icons/S2-x24.svg' # default/grey
 pIcon_o = runpath + 'icons/S2-y24.svg' # orange
@@ -128,8 +128,8 @@ pIcon_Att = runpath + 'icons/s2-att24.svg' # Attention
 #'',  #12 command to run on connection
 #'4', #13 Bluetooth timeout
 #'0', #14 Media player for tags
-#'admin', #15 Icecast2 admin name
-#'hackme', #16 Icecast2 admin password
+#'admin', #15 Icecast admin name
+#'hackme', #16 Icecast admin password
 #'N', #17 Add to Startup Applications
 #'N'] #18 Run media player on connect
 #
@@ -154,10 +154,12 @@ isloop = False #loop flag
 timeout = 0
 ushare = ''
 icecast2 = ''
+icecast = ''
 ices2 = ''
 icepid = 0
 coverart = "/cover.jpg" #change if different!
 metadata = ''
+IceServer = '' ## whether icecast or icecast2
 IceSystemwide = 0
 IceCredentials = [
 '', #IceAdmin = ''
@@ -304,7 +306,7 @@ def connect_loop(timeout):
     if timeout: # don't loop if we don't want this
         debug_print('Connecting time loop: ' + str(timeout) + ' seconds')
         isloop = True
-        timeloop = GObject.timeout_add_seconds(timeout, on_timeout, False)
+        timeloop = GLib.timeout_add_seconds(timeout, on_timeout, False)
     return
 
 
@@ -680,9 +682,12 @@ def RTP_connect():
 
 
 def Ice_connect(path): # path .m3u > Ices, local / live / .cfg > Darkice, .xml > Ices2
-    global err, runpath, homepath, IceSystemwide, IceCredentials
-    if not shutil.which("icecast2"):
-        messagebox(Gtk.MessageType.ERROR, 'Icecast2 was not found','Please install package <b>icecast2</b>')
+    global err, runpath, homepath, IceSystemwide, IceCredentials, IceServer
+    IceServer = "icecast2" ## DEBIAN based distro
+    if not shutil.which(IceServer):
+        IceServer = "icecast" ## on ARCH based distro
+    elif not shutil.which(IceServer):
+        messagebox(Gtk.MessageType.ERROR, 'Icecast was not found','Please install package <b>icecast2</b> or <b>icecast</b>')
         return 0
     if not IceSystemwide:
         if not os.path.isfile(homepath + 'icecast.xml'):
@@ -719,20 +724,32 @@ def Ice_connect(path): # path .m3u > Ices, local / live / .cfg > Darkice, .xml >
     if '.m3u' in path: # stream mp3 playlist with Ices######################
         return stream_Ices(path)
     messagebox(Gtk.MessageType.ERROR, 'Bad configuration file','Unknown file type '+ path + '\nExtensions .xml, .cfg, or .m3u are valid only.')
-    debug_print("<E> Bad configuration files for Icecast2")
+    debug_print("<E> Bad configuration files for Icecast")
     err = 4
     return 0
 
 
 def icecast_start():
 ## run in userspace this needs an icecast2.xml there
-
-    if getpid("icecast2"): # already running maybe sytemwide (?)
+    global IceServer
+    if getpid(IceServer): # already running maybe sytemwide (?)
         return 1
-    else:
-        if not os.path.isdir(homepath + 'icecast2'):
-            os.mkdir(homepath + 'icecast2')
-        args = ["icecast2", "-c", homepath + 'icecast.xml']
+    elif IceServer == "icecast2":
+        if not os.path.isdir(homepath + IceServer):
+            os.mkdir(homepath + IceServer)
+        args = [IceServer, "-c", homepath + 'icecast2.xml']
+        try:
+            debug_print("Starting Icecast2")
+            subprocess.Popen(args)
+        except:
+            debug_print(sys.exc_info())
+            messagebox(Gtk.MessageType.ERROR, 'Icecast2 could not be started')
+            debug_print('<E> Icecast2 could not run ==> check icecast.xml for errors')
+            return 0
+    elif IceServer == "icecast":
+        if not os.path.isdir(homepath + IceServer):
+            os.mkdir(homepath + IceServer)
+        args = [IceServer, "-c", homepath + 'icecast.xml']
         try:
             debug_print("Starting Icecast")
             subprocess.Popen(args)
@@ -740,7 +757,7 @@ def icecast_start():
             debug_print(sys.exc_info())
             messagebox(Gtk.MessageType.ERROR, 'Icecast could not be started')
             debug_print('<E> Icecast could not run ==> check icecast.xml for errors')
-            return 0
+            return 0    
     return 1
 
 
@@ -819,12 +836,13 @@ def stream_Ices(path): #streams mp3 from a playlist
 
 
 def Ice_disconnect(pid):
+    global IceServer
     debug_print('Disconnecting Icecast/Ices')
     args = ["kill", str(pid)] # terminate Ices/Ices2/Darkice
     subprocess.Popen(args)
     if not IceSystemwide: # terminate Icecast in userspace
-        debug_print("Stopping Icecast2 in userspace")
-        args = ["killall", "icecast2"]
+        debug_print("Stopping Icecast in userspace")
+        args = ["killall", IceServer]
         subprocess.Popen(args)
     return 0
 
@@ -1208,6 +1226,8 @@ def display_metatags(metadata):
 
 def send_metatags(metadata):# send metadata to the Icecast server
     global defaults, homepath, IceCredentials
+    return
+########## this is broken ATM ##########################################
     configpath = defaults[6]
     tag = metadata["artist"] + ' - ' + metadata["title"]
     specialchars = '#$§&%@'
@@ -1244,7 +1264,7 @@ def send_metatags(metadata):# send metadata to the Icecast server
 
 
 def get_Icecredentials(path):
-    global defaults, ice_mount, PA_Device, homepath
+    global defaults, ice_mount, PA_Device, homepath, IceServer
     if '.m3u' in path:
         path = homepath + 'ices-s2ip.conf'
     credentials = ['admin', 'pass', 'IP', 'port', 'mount']
@@ -1277,7 +1297,7 @@ def get_Icecredentials(path):
     debug_print('Mount Point is ' + credentials[2] + ":" + credentials[3] +"/" + credentials[4])
     dlabel.set_label('<b>' + credentials[2] + ':' + credentials[3] + '/' + credentials[4] + '</b>')
     if IceSystemwide:
-        path = '/etc/icecast2/icecast.xml'
+        path = '/etc/' + IceServer + '/icecast.xml'
     else:
         path = homepath + 'icecast.xml'
     try:
@@ -1287,8 +1307,8 @@ def get_Icecredentials(path):
     except:
         debug_print(sys.exc_info())
         if defaults[16] == 'hackme':
-            messagebox(Gtk.MessageType.ERROR, 'Icecast2 configuration not accessible','Configuration '+ path + ' can not be read.\n Please change permissions to allow read access.\Continu with default values now.')
-        debug_print("<E> Can't read configuration file for Icecast2")
+            messagebox(Gtk.MessageType.ERROR, 'Icecast configuration not accessible','Configuration '+ path + ' can not be read.\n Please change permissions to allow read access.\Continu with default values now.')
+        debug_print("<E> Can't read configuration file for Icecast")
         credentials[0] = defaults[15]
         credentials[1] = defaults[16]
         return credentials
@@ -1570,9 +1590,9 @@ def get_streaminput_index(): # returns the present stream input index
 
 
 def main():
-    global pamodul, defaults, timeout, ConnectLoop, CheckLoop, devices, connected, homepath, PA_Device, default_sink, runcommand, IceSystemwide
+    global pamodul, defaults, timeout, ConnectLoop, CheckLoop, devices, connected, homepath, PA_Device, default_sink, runcommand, IceSystemwide, IceServer
     debug_print('*** Starting stream2ip ' + version + ' ' + str(s2ip_setup.distribution) + ' ***')
-    IceSystemwide = getpid('icecast2') # whether iceast already runs
+    IceSystemwide = getpid(IceServer) # whether iceast already runs
     if IceSystemwide:
         debug_print("Icecast already running: " + str(IceSystemwide))
     default_sink = get_sink()[0]

@@ -12,6 +12,8 @@
 import os
 import shutil
 import time
+import gi
+gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf
 from sys import argv
 from sys import version as pyversion
@@ -56,22 +58,12 @@ render_url = []
 default_renderer = ''
 default_renderip = ''
 
-#check installed packages
-# 0 = Pulseaudio
-# 1 = PA-utils
-# 2 = RAOP
-# 3 = ushare
-# 4 = icecast2
-# 5 = ices2
-# 6 = bluetooth PA
-# 7 = Bluez
-# 8 = ices
-# 9 = darkice
+
 Package_needed = [
 '''pulseaudio
 ''', '''pulseaudio-module-raop
 ''', '''ushare, minidlna or pulseaudio-dlna
-''', '''icecast2
+''', '''icecast2 or icecast
 ''', '''darkice, ices or ices2
 ''', '''pulseaudio-module-bluetooth
 ''', '''bluez
@@ -109,7 +101,7 @@ packagelist = [
 {'name':'darkice', 'state':'yes'}, # 5
 {'name':'ices2', 'state':'yes'}, # 6
 {'name':'ices', 'state':'yes'}, # 7
-{'name':'pulseaudio-module-bluetooth', 'state':'yes'}, # 8
+{'name':'icecast', 'state':'yes'}, # 8
 {'name':'bluez', 'state':'yes'}, # 9
 {'name':'pulseaudio-dlna', 'state':'yes'} # 10
 ]
@@ -554,8 +546,9 @@ def check_package(mode): # mode is position of device list
             state[0] = True
 ##
     elif mode == 5: #INet Radio 45
-        if packagelist[4]['state'] == 'no':
+        if packagelist[4]['state'] == 'no' and packagelist[8]['state'] == 'no':
             state[4] = True  # Icecast2
+            start[8] = True  # Icecast
         if  packagelist[5]['state'] == 'no' and packagelist[6]['state'] == 'no' and packagelist[7]['state'] == 'no':
             state[5] = True  # Darkice
             state[6] = True  # Ices2
