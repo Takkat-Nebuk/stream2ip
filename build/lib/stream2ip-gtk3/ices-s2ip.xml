@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ices>
+    <background>0</background>
+    <logpath>/var/log/ices</logpath>
+    <logfile>ices.log</logfile>
+    <logsize>2048</logsize>
+    <loglevel>0</loglevel>
+    <consolelog>0</consolelog>
+    <pidfile>ices.pid</pidfile>
+    <stream>
+        <metadata>
+            <name>stream2ip</name>
+            <genre>live</genre>
+            <description>Stream from Pulse</description>
+        </metadata>
+
+        <input>
+            <module>alsa</module>
+            <param name="rate">44100</param>
+            <param name="channels">2</param>
+            <param name="device">pulse</param>
+            <param name="buffer-time">500</param>
+        </input>
+        <instance>
+            <hostname>localhost</hostname>
+            <port>8000</port>
+            <password>hackme</password>
+            <mount>/stream2ip.ogg</mount>
+            <yp>0</yp>
+            <encode>  
+                <quality>10</quality>
+                <samplerate>44100</samplerate>
+                <channels>2</channels>
+            </encode>
+        </instance>
+    </stream>
+</ices>

@@ -131,13 +131,13 @@
 
     <paths>
 		<!-- basedir is only used if chroot is enabled -->
-        <basedir>/usr/share/icecast</basedir>
+        <basedir>/usr/share/icecast2</basedir>
 
         <!-- Note that if <chroot> is turned on below, these paths must both
              be relative to the new root, not the original root -->
-        <logdir>/home/USER/.config/stream2ip/icecast</logdir>
-        <webroot>/usr/share/icecast/web</webroot>
-        <adminroot>/usr/share/icecast/admin</adminroot>
+        <logdir>/home/USER/.config/stream2ip/icecast2</logdir>
+        <webroot>/usr/share/icecast2/web</webroot>
+        <adminroot>/usr/share/icecast2/admin</adminroot>
         <!-- <pidfile>/usr/share/icecast2/icecast.pid</pidfile> -->
 
         <!-- Aliases: treat requests for 'source' path as being for 'dest' path
