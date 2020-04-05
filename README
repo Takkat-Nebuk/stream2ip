@@ -1,0 +1,49 @@
+#########################
+#                       #
+#       stream2ip       #
+#         1.1.x         #
+#        Readme	        #
+#########################
+
+Summary
+=======
+
+Stream2ip is a one-click GUI to stream audio to clients in the LAN/WLAN
+
+Installation
+============
+Dependencies:
+python, python3 (>=3.0), python3-gi, python3-dbus, gir1.2-appindicator3-0.1, librsvg2-common, libgtk-3-0
+
+Optional packages:
+python3-apt for installing missing packages on Debian
+ushare or minidlna - for UPnP file streams
+pulseaudio-dlna - for pushing audio to a DLNA renderer
+icecast2, darkice, ices, or ices2 - for internet radio streaming
+
+Stream2ip will install and run without these packages but for full functionality installation of all of them is recommended. If apt is our package manager stream2ip will prompt for installing additional packages if needed.
+
+If not installed by our DEB installer or with the install script then please copy all files to the desired location (default is /usr/share/stream2ip/) and make sure stream2ip.py is executable. Configuration files will be stored in ~/.config/stream2ip.
+
+For a manual install from the project root run
+
+sudo install
+
+To be able to change the output sink automatically (not needed for internet radio or uPnP) we need to edit the following line in  /etc/pulse/default.pa
+
+    load-module module-stream-restore restore_device=false
+
+Usage:
+======
+
+A manual is available at http://stream2ip.takkat.de
+
+Command line options:
+=====================
+These are command line options for stream2ip when run from a shell:
+
+-?, help, -help: show manpage
+-v, -V, --verbous: display verbous output
+-l, -L, --log: append output to logfile <~/.config/stream2ip/stream2ip.log>
+-s, -S, --setup: run setup program only
+

@@ -1,0 +1,11 @@
+
+[Desktop Entry]
+Type=Application
+Exec=stream2ip
+Hidden=false
+NoDisplay=false
+X-GNOME-Autostart-enabled=true
+Name=stream2ip
+Comment=
+
+Name[de_DE]=stream2ip-autostart

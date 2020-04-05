@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.1
+Encoding=UTF-8
+Name=stream2ip
+GenericName=stream2ip
+Comment=Streaming Audio to Network
+Exec=stream2ip
+Icon=/usr/share/stream2ip/stream2ip-gtk3/icons/S2-x.svg
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Audio;Network;
+

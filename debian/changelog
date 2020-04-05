@@ -1,0 +1,6 @@
+stream2ip-gtk3 (1.1.6-ppa0) focal; urgency=low
+
+  * fix for python >3.8
+  * deprecated bluetooth and airport express support
+
+ -- Takkat Nebuk <takkat.nebuk@gmail.com>  Sun, 05 Apr 2020 10:30:00 +0100

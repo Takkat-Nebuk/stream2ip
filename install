@@ -1,0 +1,10 @@
+#!/bin/bash
+
+###############################
+# Installer for stream2ip 1.0 #
+# RUN AS ROOT                 #
+###############################
+
+echo Installing stream2ip to /usr/share
+python3 setup.py install --prefix=/usr/share/stream2ip --install-lib=/usr/share/stream2ip --install-scripts=/usr/bin --install-data=/usr/share/applications
+

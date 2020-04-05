@@ -1,0 +1,4 @@
+stream2ip	/usr/bin
+stream2ip-gtk3	/usr/share/stream2ip
+data/*	/usr/share/applications/
+

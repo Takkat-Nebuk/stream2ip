@@ -1,0 +1,33 @@
+.TH STREAM2IP
+.SH NAME
+stream2ip - GUI to setup network audio streams
+.SH SYNOPSIS
+.B stream2ip [\fIOptions\fP]...
+
+.SH DESCRIPTION
+stream2ip is a GUI that allows setting up and choosing any from a variety of network streaming protocols for streaming local audio to the LAN/WLAN. Stream2ip supports:
+.B \fBInternet radio streams\fR with Icecast2/Darkice/Ices/Ices2
+.B \fBUPnP file streams\fR with uShare
+.B \fBRTP-Multicast streams\fR with PulseAudio
+
+.SH "Options"
+.LP
+.TP
+\fB \-?, help, \-help\fR
+print this manpage
+.TP
+\fB \-v, \-V, \-\-verbous\fR
+display verbous output
+.TP
+\fB \-l, \-L, \-\-log\fR
+write output to logfile
+.TP
+\fB \-s, \-S, \-\-setup\fR
+run setup program only
+
+.SH AUTHORS
+Takkat Nebuk <takkat.nebuk@gmail.com>
+
+.SH "SEE ALSO"
+.B s2ip_setup
+
