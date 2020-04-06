@@ -21,30 +21,15 @@ Additional packages needed will be prompted for installation.
 '''
 
 help_airport_txt = '''
-<b><big>Airport Express</big></b>\n
-<small><i>The Airport Express needs to be set up from Windows or Mac OS.
-Only first generation (Air Tunes) devices will work.</i>
+<b><big>Airport Express (discontinued)</big></b>\n
+<small><i>Airport Express (1st Gen Air Tunes) devices are no longer supported.</i>
 \n
-Give in the IP and optional the port fo the device in the settings line: <tt>[IP]:[Port]</tt>
-\n
-<b>Example setting:</b>
-<tt><span background="white"> 192.168.1.20:5000</span></tt>
-\n
-If we had chosen to <i>Autoconnect</i> we will wait for the device and connect on its presence.
 </small>'''
 
 help_bluetooth_txt = '''
-<b><big>Bluetooth Audio Devices</big></b>\n
-<small>A device needs to be set up and paired from the system tools 
-before we can use it with stream2ip.\n
+<b><big>Bluetooth Audio Devices (discontinued)</big></b>\n
+<small>Connecting to Bluetooth auido devices is no longer supported\n
 \n
-On giving in a device MAC we are able to connect audio to this device as soon as
-it is there. Choosing <i>Auto</i> lets stream2ip connect to the first device
-discovered. This will only work on a single Bluetooth device in our network.
-\n
-<b>Example setting:</b>
-<tt><span background="white"> 01:23:45:67:89:AB </span></tt>
-<tt><span background="white"> Auto </span></tt>
 </small>'''
 
 help_upnp_txt = '''

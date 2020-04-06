@@ -307,9 +307,9 @@ def on_combo_entry_changed(new_iter):
 
 def on_ipentry_changed(new_iter):
     global defaults
-    position = device.get_active()
+    position = device.get_active() + 2
     defaults[position+1] = ip_entrybox.get_text()
-    if position == 0 or position == 1 or position == 4 or position == 6: # not options
+    if position == 0 or position == 1 or position == 4 or position == 6: # no options
         defaults[5] = ''
         ip_entrybox.set_text('')
 
@@ -336,6 +336,7 @@ def on_dlnaselect_clicked(new_iter, arg2):
         defaults[4] = render_name[pos] + '@' + render_ip[pos]
     else:
         defaults[4] = render_url[pos]
+    print("DEBUG: " + defaults[4])
     ip_entrybox.set_text(defaults[4])
     dlnabox.hide()
 
@@ -468,7 +469,7 @@ def set_gui(settings):
     for i in s2ip_methods:
         device_store.append([i['name']]) # = s2ip_methods[i]['name']
     device.set_model(device_store)
-    device.set_active(position -2) ## 0,1 deprecated!
+    device.set_active(position - 2) ## 0,1 deprecated!
     player_store = Gtk.ListStore(str) # set dropdown for supported players
     for j in mplayers:
         player_store.append([j['name']]) # = mplayers[j]['name']
@@ -627,7 +628,6 @@ def get_renderer_url(method):
             header, address = sock.recvfrom(bufsize)
             a = address[0]
             h = header.lower()
-            print (h)
             rendurl = h.decode().split('location: ')[1].split('\r')[0]
             rendip = rendurl.split('http://')[1].split(':')[0]
             with urllib.request.urlopen(rendurl) as f:
@@ -640,7 +640,7 @@ def get_renderer_url(method):
         except: ###
             break
     sock.close()
-    if not render_name[0]:
+    if not render_name:
         messagebox(Gtk.MessageType.ERROR, "Could not find any DLNA renderers","Please make sure they are discoverable on searching.")
         return ''
     else:

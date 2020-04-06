@@ -6,7 +6,7 @@
 # Date: 2020-04-03
 version = '1.1.6'
 #####################################################################################
-# Copyright (C) 2015 Takkat Nebuk                                                   #
+# Copyright (C) 2020 Takkat Nebuk                                                   #
 #                                                                                   #
 # This program is free software; you can redistribute it and/or modify it under the #
 # terms of the GNU General Public License as published by the Free Software         #
@@ -318,14 +318,6 @@ def on_timeout(options): #what to check when looping
     pos = int(defaults[0]) + 1
     mp_i = int(defaults[14])
     if connected: #check if all devices are still alive and maybe get Tags
- #       if pos == 1: # 'AirportExpress'
- #           if not AE_search(defaults[pos]):
- #               connected = disconnect('AirportExpress')
- #               return CheckLoop
- #       if pos == 2: # 'Bluetooth'
- #           if not bt_scan(defaults[pos]):
- #               connected = disconnect('Bluetooth')
- #               return CheckLoop # no further - else connect below.
         if pos == 4: # 'DLNA live' ## using pulseaudio-dlna
             if not DLNA_search(DLNA_ip):
                 connected = disconnect('DLNA live')
@@ -367,10 +359,6 @@ def on_timeout(options): #what to check when looping
         Icon_layout('orange')
         Current_Icon = Icon_orange
         status.set_label(State_Searching + PA_Device)
-#        if pos == 1: #PA_Device == 'AirPort Express' -> deprecated!
-#            pamodul = AE_connect(defaults[pos])
-#        elif pos == 2: #PA_Device == 'Bluetooth' -> deprecated!
-#            pamodul = BLUE_connect(defaults[pos])
         if pos == 4: #PA_Device == 'DLNA live' -> needs loop!
             pamodul = DLNA_connect(defaults[pos])
         elif pos == 5: #PA_Device == 'RTP/Multicast'
@@ -416,104 +404,6 @@ def paversion(): # we need to know if we are running pa 0.9.x or 1.0.x
     return version
 
 
-#def AE_connect(parameters): # connect only if found
-#    global err
-#    raop_avahi = False
-#    raopname='RAOP'
-#    if '.local' in parameters: ### we use Avahi and paprefs for module detection
-#        AE_IP = parameters
-#        AE_Port = ''
-#        raop_avahi=True
-#    elif ':' in parameters:
-#        AE_IP = parameters.split(':')[0]
-#        AE_Port = parameters.split(':')[1]
-#    else:
-#        AE_IP = parameters
-#        AE_Port = '5000'
-#    if not AE_search(AE_IP):
-#            err = 1
-#            return 0
-#    try:
-#        if paversion() < '1.0': ### for puseaudio < 1.0.0 (Ubuntu < 11.10)
-#            args = ['''pactl load-module module-raop-sink sink_name=RAOP  sink_properties=device.description="AirportExpress" server='''+AE_IP]
-#        else:
-#            args = ['''pactl load-module module-raop-sink sink_name=RAOP  sink_properties=device.description="AirportExpress" server='''+AE_IP+':'+AE_Port]
-#        if not raop_avahi:
-#            retcode = subprocess.Popen(args, shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-#            time.sleep(3) # sleep a bit - pulseaudio is so slow
-#            status = retcode.communicate()
-#            modul = status[0].decode().split('\n')[0]
-#            if status[1]: #on error
-#                err = 3
-#                debug_print('Loading module AEX failed with:')
-#                debug_print(status)
-#                return 0
-#            if not set_sink(raopname):
-#                debug_print('PulseAudio module: ' + modul + ' AEX: ' + AE_IP+':'+AE_Port)
-#                return modul
-#            else:
-#                err = 3
-#                debug_print('Setting AEX as audio sink failed')
-#                return 0
-#        else: # we use Avahi .local and raop-module loading from paprefs (for pa >= 1.0)
-#            allsinks = get_sink()[2]
-#            if not 'raop' in allsinks:
-#                err = 3
-#                debug_print('RAOP module (Avahi) not found for ' + parameters)
-#            else:
-#                set_sink('raop.'+parameters)
-#                return 'Avahi'
-#    except:
-#        debug_print(sys.exc_info())
-#        debug_print('<E> pactl could not load AEX>')
-#        err = 2
-#        return 0 # was not a good idea to call pactl
-
-
-
-#def AE_search(parameters): # make sure device is ready
-#    global err
-#    AE_IP = parameters
-#    if ':' in parameters:
-#        AE_IP = parameters.split(':')[0]
-#    if subprocess.call("ping -c 1 -W 1 "+ AE_IP + ">/dev/null", shell=True):
-#        err = 1
-#        return False # device not found!
-#    else:
-#        err = 0
-#        return True
-
-
-#def BLUE_connect(MAC): # set Bluetooth-Audio as default sink
-#    PMAC = bt_scan(MAC.replace(':', '_'))
-#    if PMAC:
-#        return bt_paconnect(PMAC)
-#    else:
-#        return 0
-
-
-#def bt_scan(PMAC):
-#    global err
-#    allsinks = get_sink()[2]
-#    if PMAC == 'Auto' or PMAC == 'auto':
-#        if 'bluez_sink' in allsinks:
-#            PMAC = allsinks.split('bluez_sink.', 1)[1].split('>', 1)[0]
-#            return PMAC
-#   else:
-#        if PMAC in allsinks:
-#            return PMAC
-#    err = 1
-#    return False
-
-
-#def bt_paconnect(PMAC):
-#    global err
-#    if not set_sink('bluez_sink.' + PMAC):
-#        debug_print('Connected to Bluetooth device bluez_sink.' + PMAC)
-#        return 'Bluez'
-#    else:
-#        debug_print('<E> PA is unable to load bluez_sink.' + PMAC)
-#        return 0
 
 
 def UPNP_connect(path):
@@ -683,9 +573,9 @@ def RTP_connect():
 
 def Ice_connect(path): # path .m3u > Ices, local / live / .cfg > Darkice, .xml > Ices2
     global err, runpath, homepath, IceSystemwide, IceCredentials, IceServer
-    IceServer = "icecast2" ## DEBIAN based distro
+    IceServer = "icecast2" ## e.g. DEBIAN based distro
     if not shutil.which(IceServer):
-        IceServer = "icecast" ## on ARCH based distro
+        IceServer = "icecast" ## e.g. ARCH based distro
     elif not shutil.which(IceServer):
         messagebox(Gtk.MessageType.ERROR, 'Icecast was not found','Please install package <b>icecast2</b> or <b>icecast</b>')
         return 0
@@ -860,9 +750,6 @@ def run_command(args):
 
 def disconnect(device): # Module and sink are unloaded
     global pamodul, err, timeout, ConnectLoop, isloop, connected, icepid, defaults
-#    if device == 'Bluetooth':
-#        restore_padefault() # restore default sink
-#        pamodul = 0
     if device == 'DLNA live':
         restore_padefault()
         debug_print('Terminating DLNA server pulseaudio-dlna')
@@ -893,14 +780,6 @@ def disconnect(device): # Module and sink are unloaded
     elif device == 'Avahi':
         pamodul = 0
         restore_padefault()
-#    elif pamodul != 0: # any AEX here?
-#        try:
-#            subprocess.Popen("pactl unload-module "+str(pamodul), shell=True)
-#            debug_print('PA module ' + str(pamodul) + ' unloaded')
-#        except:
-#            debug_print('<E> Unloading AirportExpress sink failed')
-#        restore_padefault()
-#        pamodul = 0
     else:
         return True
     status.set_label(State_Disconnected)
@@ -961,10 +840,6 @@ def device_ready(modul): # change layout and minimize
             Current_Icon = Icon
             status.set_label(Err_Msg[err])
         return False
-#    elif PA_Device == 'Bluetooth':
-#        Icon_layout('blue')
-#        Current_Icon = Icon_blue
-#        status.set_label(PA_Device + State_Connected + modstring)
     elif PA_Device == 'UPnP-Device':
         Icon_layout('red')
         Current_Icon = Icon_red
@@ -1012,7 +887,6 @@ def Icon_layout(colour): # Layout settings dep on state
     if colour == 'grey': # no connection
         image.set_from_file(Icon)
         window.set_icon(AppIcn)
-#        window.set_icon_from_file(Icon)
         cbutton.set_label(Connect)
     elif colour == 'orange': # on Check Loop when device not ready!
         image.set_from_file(Icon_orange)
@@ -1291,9 +1165,19 @@ def get_Icecredentials(path):
         credentials[3] = string_mstrip(icecfg, '<port>', '</port>')
     ice_mount = credentials[4]
     if credentials[2] == 'localhost':
+
         retcode = subprocess.Popen(['hostname', '-I'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         localip = retcode.communicate()[0].decode()
-        credentials[2] = localip.strip('\n')
+        if localip:  ## DEBIAN
+            credentials[2] = localip.strip('\n')
+        else: ## other
+            retcode = subprocess.Popen(["ip","route","get","1"], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+            localip = retcode.communicate()[0].decode()
+        if localip:
+                 print("DEBUG: " + localip)
+                 credentials[2] = localip.rsplit("src ",1)[1].rsplit(" uid",1)[0]
+        else:
+            debug_print("<W> IP of localhost could not be determined")
     debug_print('Mount Point is ' + credentials[2] + ":" + credentials[3] +"/" + credentials[4])
     dlabel.set_label('<b>' + credentials[2] + ':' + credentials[3] + '/' + credentials[4] + '</b>')
     if IceSystemwide:
@@ -1576,13 +1460,7 @@ def get_streaminput_index(): # returns the present stream input index
     retcode = subprocess.Popen("pacmd list-sink-inputs", shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     status = retcode.communicate()
     allinputs = status[0].decode() # all inputs
-#    inr = 0
     if 'index' in allinputs:
-#        if '>>>' in allinputs:
-#            inr = int(allinputs.split(' sink input(s)')[0].split('>>> ')[1])
-#        else:
-#            inr = int(allinputs.rsplit(' sink.input(s)')[0])
-#    if inr:
         index = allinputs.rsplit('state: RUNNING', 1)[0].rsplit('index: ', 1)[1].rsplit('driver:', 1)[0]
         index = index.replace('\n\t', '')
     debug_print('Input Index: ' + index)

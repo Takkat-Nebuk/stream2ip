@@ -43,12 +43,12 @@ sqoptions_txt = '<u>Start/Ende-Optionen</u>'
 dev_label_txt = '<b>Geräte</b>'
 
 ip_label_txt = [
-'IP der AirPort Express:', 
-'MAC des Bluetooth-Geräts:', 
+'', 
+'', 
 'Verzeichnispfad:',
 'Keine Optionen verfügbar',
 'Konfiguration/Playlist:',
-'Auszuführender Code:'
+''
 ]
 
 Err_Msg = [
