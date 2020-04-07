@@ -230,47 +230,47 @@ def on_install_clicked(buttonid, event): ## apt dependent!
 #            else:
 #                not_installables += packagelist[i]['name'] + ' '
     print (selected) ## debug
-    if not use_apt:
-	    return
-    if True in selected:
-        args = "pkexec apt-get -y install " + packages
-        print(args)
-        if pyversion < '3':
-            try:
-                retcode = subprocess.Popen(args, shell = True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-                s = retcode.communicate()[1]
-                print(s)
-            except:
-                print('<E> Bad command: ' + args)
-        else:
-            try:
-                with subprocess.Popen(args, shell = True, stderr=subprocess.PIPE, stdout=subprocess.PIPE) as proc:
-                    s = proc.stdout.read().decode()
-                print(s)
-            except:
-                print('<E> Bad command: ' + args)
-        aptcache = apt.Cache()  ## refresh apt cache
-        ptest = packages.split(' ')
-        i_err = 0
-        package_error = ''
-        ## Test if installation was successful:
-        for i in range(len(ptest) -1):  ## -1 because there is a blank
-            print(i)
-            try:
-                if not aptcache[ptest[i]].is_installed:
-                    i_err += 1
-            except:
-                i_err += 1
-                print('<E> apt cache error for: ' + ptest[i])
-            if i_err:
-                package_error += ptest[i] + ' '
-                print('<E> ' + ptest[i] + ' was not installed')
-        if i_err or not_installables:
-            messagebox(Gtk.MessageType.ERROR, "Package(s) could not be installed","Failed to install <b>" + package_error + not_installables + "</b>\n\nWe may need to add another software source or install manually.")
-            state = [0,0,0,0,0, 0,0,0,0,0, 0]
-        else:
-            messagebox(Gtk.MessageType.INFO, "Successfully installed:", "<b>" + packages + "</b>\n\nSome applications need additional\nconfiguration before use with stream2ip.")
     return
+########## Packages installation is a security risk - DEPRECATED #########
+#    if True in selected:
+#        args = "pkexec apt-get -y install " + packages
+#        print(args)
+#        if pyversion < '3':
+#            try:
+#                retcode = subprocess.Popen(args, shell = True, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+#                s = retcode.communicate()[1]
+#                print(s)
+#            except:
+#                print('<E> Bad command: ' + args)
+#        else:
+#            try:
+#                with subprocess.Popen(args, shell = True, stderr=subprocess.PIPE, stdout=subprocess.PIPE) as proc:
+#                    s = proc.stdout.read().decode()
+#                print(s)
+#            except:
+#                print('<E> Bad command: ' + args)
+#        aptcache = apt.Cache()  ## refresh apt cache
+#        ptest = packages.split(' ')
+#        i_err = 0
+#        package_error = ''
+#        ## Test if installation was successful:
+#        for i in range(len(ptest) -1):  ## -1 because there is a blank
+#            print(i)
+#            try:
+#                if not aptcache[ptest[i]].is_installed:
+#                    i_err += 1
+#            except:
+#                i_err += 1
+#                print('<E> apt cache error for: ' + ptest[i])
+#            if i_err:
+#                package_error += ptest[i] + ' '
+#                print('<E> ' + ptest[i] + ' was not installed')
+#        if i_err or not_installables:
+#            messagebox(Gtk.MessageType.ERROR, "Package(s) could not be installed","Failed to install <b>" + package_error + not_installables + "</b>\n\nWe may need to add another software source or install manually.")
+#            state = [0,0,0,0,0, 0,0,0,0,0, 0]
+#        else:
+#            messagebox(Gtk.MessageType.INFO, "Successfully installed:", "<b>" + packages + "</b>\n\nSome applications need additional\nconfiguration before use with stream2ip.")
+#    return
 
 
 def install_cancelled(buttonid, event):
@@ -549,7 +549,7 @@ def check_package(mode): # mode is position of device list
     elif mode == 5: #INet Radio 45
         if packagelist[4]['state'] == 'no' and packagelist[8]['state'] == 'no':
             state[4] = True  # Icecast2
-            start[8] = True  # Icecast
+            state[8] = True  # Icecast
         if  packagelist[5]['state'] == 'no' and packagelist[6]['state'] == 'no' and packagelist[7]['state'] == 'no':
             state[5] = True  # Darkice
             state[6] = True  # Ices2
