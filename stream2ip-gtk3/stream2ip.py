@@ -1176,8 +1176,8 @@ def get_Icecredentials(path):
             if localip:
                  print("DEBUG: " + localip)
                  credentials[2] = localip.rsplit("src ",1)[1].rsplit(" uid",1)[0]
-        else:
-            debug_print("<W> IP of localhost could not be determined")
+            else:
+                debug_print("<W> IP of localhost could not be determined")
     debug_print('Mount Point is ' + credentials[2] + ":" + credentials[3] +"/" + credentials[4])
     dlabel.set_label('<b>' + credentials[2] + ':' + credentials[3] + '/' + credentials[4] + '</b>')
     if IceSystemwide:
