@@ -3,8 +3,8 @@
 #
 # stream2ip
 # Author: Takkat Nebuk
-# Date: 2020-04-03
-version = '1.1.6'
+# Date: 2022-04-10
+version = '1.1.7'
 #####################################################################################
 # Copyright (C) 2020 Takkat Nebuk                                                   #
 #                                                                                   #
@@ -1166,14 +1166,14 @@ def get_Icecredentials(path):
     ice_mount = credentials[4]
     if credentials[2] == 'localhost':
 
-        retcode = subprocess.Popen(['hostname', '-I'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        retcode = subprocess.Popen(['hostname', '-i'], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         localip = retcode.communicate()[0].decode()
         if localip:  ## DEBIAN
             credentials[2] = localip.strip('\n')
         else: ## other
             retcode = subprocess.Popen(["ip","route","get","1"], stderr=subprocess.PIPE, stdout=subprocess.PIPE)
             localip = retcode.communicate()[0].decode()
-        if localip:
+            if localip:
                  print("DEBUG: " + localip)
                  credentials[2] = localip.rsplit("src ",1)[1].rsplit(" uid",1)[0]
         else:
